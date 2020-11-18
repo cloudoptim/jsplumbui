@@ -172,7 +172,7 @@
 						//let lineId = this.getUUID()
                         if (this.loadEasyFlowFinish) {
                             this.data.lineList.push({from: from, to: to})
-							axios.post('http://localhost:8080/line', {
+							axios.post('http://35.153.193.172:8080/line', {
 							    id: evt.connection.id,
                                 from: from,
                                 to: to,
@@ -306,7 +306,7 @@
             deleteLine(from, to) {
                 this.data.lineList = this.data.lineList.filter(function (line) {
                     if (line.from == from && line.to == to) {
-					    axios.delete('http://localhost:8080/line/'+from+'/'+to
+					    axios.delete('http://35.153.193.172:8080/line/'+from+'/'+to
 							).then((response) => {
                                 console.log("Deleted line: ", from , 'to', to);
                             })
@@ -327,7 +327,7 @@
                     if (node.id === data.nodeId) {
 					    node.left = data.left
                         node.top = data.top
-					    axios.put('http://localhost:8080/node', {
+					    axios.put('http://35.153.193.172:8080/node', {
 							    id: node.id,
                                 left: node.left + 'px',
                                 top: node.top + 'px',
@@ -396,7 +396,7 @@
                  * Business logic, to decide whether node could be added
                  */
                 this.data.nodeList.push(node)
-				axios.post('http://localhost:8080/node', {
+				axios.post('http://35.153.193.172:8080/node', {
 							    id: nodeId,
                                 name: nodeName,
                                 type: nodeMenu.type,
@@ -442,7 +442,7 @@
                         if (node.id === nodeId) {
                             // False delete, node is hidden, to prevent nodes from being moved around
                             // node.show = false
-							axios.delete('http://localhost:8080/node/'+node.id
+							axios.delete('http://35.153.193.172:8080/node/'+node.id
 							).then((response) => {
                                 console.log("Deleted node: ", nodeId);
 								//return false
@@ -510,7 +510,7 @@
                 })
             },
             dataReloadA() {
-			    axios.get('http://localhost:8080/project/data/1'
+			    axios.get('http://35.153.193.172:8080/project/data/1'
 							).then((response) => {
 							    console.log(response.data.data)
                                 this.dataReload(response.data.data)
@@ -521,7 +521,7 @@
                 //this.dataReload(getDataA())
             },
             dataReloadB() {
-			axios.get('http://localhost:8080/project/data/2'
+			axios.get('http://35.153.193.172:8080/project/data/2'
 							).then((response) => {
                                 this.dataReload(response.data.data)
                             })
@@ -531,7 +531,7 @@
                 //this.dataReload(getDataB())
             },
             dataReloadC() {
-			axios.get('http://localhost:8080/project/data/3'
+			axios.get('http://35.153.193.172:8080/project/data/3'
 							).then((response) => {
                                 this.dataReload(response.data.data)
                             })
