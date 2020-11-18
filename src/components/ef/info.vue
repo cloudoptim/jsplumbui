@@ -9,7 +9,7 @@
                 type="warning"
                 description="Process could be saved, to be loaded in the future"
                 show-icon
-                close-text="知道了"
+                close-text="Ok"
         >
         </el-alert>
         <br/>

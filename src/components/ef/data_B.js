@@ -28,7 +28,8 @@ let dataB = {
             top: '351px',
             ico: 'el-icon-present',
             state: 'warning'
-        }, {
+        }, 
+		{
             id: 'nodeD',
             name: 'Process B - Node D',
             type: 'task',

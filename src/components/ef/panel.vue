@@ -68,10 +68,15 @@
     import FlowHelp from '@/components/ef/help'
     import FlowNodeForm from './node_form'
     import lodash from 'lodash'
+	//import Vue from 'vue'
+    //import axios from 'axios'
+    //import VueAxios from 'vue-axios'
     import { getDataA } from './data_A'
     import { getDataB } from './data_B'
     import { getDataC } from './data_C'
     import { getDataD } from './data_D'
+	
+	const axios = require('axios');
 
     export default {
         data() {
@@ -137,7 +142,7 @@
             this.jsPlumb = jsPlumb.getInstance()
             this.$nextTick(() => {
                 // Default is process A, will reload based on chosen option
-                this.dataReload(getDataB())
+                this.dataReloadA()
             })
         },
         methods: {
@@ -148,6 +153,7 @@
                 this.jsPlumb.ready(() => {
                     this.jsPlumb.importDefaults(this.jsplumbSetting)
                     this.jsPlumb.setSuspendDrawing(false, true);
+					//console.log("PID: ", project_id);
                     this.loadEasyFlow()
                     // Reference, https://www.cnblogs.com/ysx215/p/7615677.html
                     this.jsPlumb.bind('click', (conn, originalEvent) => {
@@ -163,8 +169,22 @@
                     this.jsPlumb.bind("connection", (evt) => {
                         let from = evt.source.id
                         let to = evt.target.id
+						//let lineId = this.getUUID()
                         if (this.loadEasyFlowFinish) {
                             this.data.lineList.push({from: from, to: to})
+							axios.post('http://localhost:8080/line', {
+							    id: evt.connection.id,
+                                from: from,
+                                to: to,
+								label: "",
+                                projectId: "1"
+							}
+							).then((response) => {
+                                console.log(response.data)
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
                         }
                     })
 
@@ -219,7 +239,7 @@
                         this.jsPlumb.draggable(node.id, {
                             containment: 'parent',
                             stop: function (el) {
-                                // 拖拽节点结束后的对调
+                                // After dragging node into canvas
                                 console.log('End drag: ', el)
                             }
                         })
@@ -286,6 +306,13 @@
             deleteLine(from, to) {
                 this.data.lineList = this.data.lineList.filter(function (line) {
                     if (line.from == from && line.to == to) {
+					    axios.delete('http://localhost:8080/line/'+from+'/'+to
+							).then((response) => {
+                                console.log("Deleted line: ", from , 'to', to);
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
                         return false
                     }
                     return true
@@ -298,8 +325,19 @@
                 for (var i = 0; i < this.data.nodeList.length; i++) {
                     let node = this.data.nodeList[i]
                     if (node.id === data.nodeId) {
-                        node.left = data.left
+					    node.left = data.left
                         node.top = data.top
+					    axios.put('http://localhost:8080/node', {
+							    id: node.id,
+                                left: node.left + 'px',
+                                top: node.top + 'px',
+							}
+					    ).then((response) => {
+                            console.log(response.data)
+                        })
+					    .catch(function (error) {
+                            console.log(error);
+                        });   
                     }
                 }
             },
@@ -351,12 +389,29 @@
                     left: left + 'px',
                     top: top + 'px',
                     ico: nodeMenu.ico,
-                    state: 'success'
+                    state: 'success',
+					projectId: "1"
                 }
                 /**
                  * Business logic, to decide whether node could be added
                  */
                 this.data.nodeList.push(node)
+				axios.post('http://localhost:8080/node', {
+							    id: nodeId,
+                                name: nodeName,
+                                type: nodeMenu.type,
+                                left: left + 'px',
+                                top: top + 'px',
+                                ico: nodeMenu.ico,
+                                state: "success",
+                                projectId: node.projectId
+							}
+							).then((response) => {
+                                console.log(response.data)
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
                 this.$nextTick(function () {
                     this.jsPlumb.makeSource(nodeId, this.jsplumbSourceOptions)
                     this.jsPlumb.makeTarget(nodeId, this.jsplumbTargetOptions)
@@ -387,6 +442,14 @@
                         if (node.id === nodeId) {
                             // False delete, node is hidden, to prevent nodes from being moved around
                             // node.show = false
+							axios.delete('http://localhost:8080/node/'+node.id
+							).then((response) => {
+                                console.log("Deleted node: ", nodeId);
+								//return false
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
                             return false
                         }
                         return true
@@ -447,13 +510,35 @@
                 })
             },
             dataReloadA() {
-                this.dataReload(getDataA())
+			    axios.get('http://localhost:8080/project/data/1'
+							).then((response) => {
+							    console.log(response.data.data)
+                                this.dataReload(response.data.data)
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
+                //this.dataReload(getDataA())
             },
             dataReloadB() {
-                this.dataReload(getDataB())
+			axios.get('http://localhost:8080/project/data/2'
+							).then((response) => {
+                                this.dataReload(response.data.data)
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
+                //this.dataReload(getDataB())
             },
             dataReloadC() {
-                this.dataReload(getDataC())
+			axios.get('http://localhost:8080/project/data/3'
+							).then((response) => {
+                                this.dataReload(response.data.data)
+                            })
+							.catch(function (error) {
+                                console.log(error);
+                            });
+                //this.dataReload(getDataC())
             },
             dataReloadD() {
                 this.dataReload(getDataD())
