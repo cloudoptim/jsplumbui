@@ -79,7 +79,7 @@ connector - Line type , Options: ["StateMachine", "Flowchart", "Bezier", "Straig
 1. Download code
 
 2. At root of code, find package.json, and ensure the following packages are included
-   ```js
+   ``` js
     "element-ui": "2.9.1",
     "lodash": "4.17.15",
     "vue": "^2.5.2",
@@ -90,7 +90,7 @@ connector - Line type , Options: ["StateMachine", "Flowchart", "Bezier", "Straig
 3. Add changes to codes in src/components/ef
 
 4. Edit main.js file, import the following packages
-   ```js
+   ``` js
   import ElementUI from 'element-ui'
   import 'element-ui/lib/theme-chalk/index.css'
   import 'custom code'
